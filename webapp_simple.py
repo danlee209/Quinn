@@ -10,36 +10,36 @@ from datetime import datetime, timedelta
 
 app = Flask(__name__)
 
-# Twitter profile information
+# Twitter profile information - REAL Quinn account profile pictures!
 TWITTER_PROFILES = {
     "TechNewsByQuinn": {
         "username": "TechNewsByQuinn",
-        "profile_image": "https://pbs.twimg.com/profile_images/1738434567/Quinn_400x400.jpg",
+        "profile_image": "https://pbs.twimg.com/profile_images/1961225994573950976/-FJBUh-w_400x400.jpg",
         "display_name": "TechNews by Quinn"
     },
     "CryptoByQuinn": {
         "username": "CryptoByQuinn", 
-        "profile_image": "https://pbs.twimg.com/profile_images/1738434567/Quinn_400x400.jpg",
+        "profile_image": "https://pbs.twimg.com/profile_images/1961586020098396160/qaGJGjrX_400x400.jpg",
         "display_name": "Crypto by Quinn"
     },
     "RedditByQuinn": {
         "username": "RedditByQuinn",
-        "profile_image": "https://pbs.twimg.com/profile_images/1738434567/Quinn_400x400.jpg", 
+        "profile_image": "https://pbs.twimg.com/profile_images/1961570789989265408/XW-SMtAl_400x400.jpg", 
         "display_name": "Reddit by Quinn"
     },
     "ProductByQuinn": {
         "username": "ProductByQuinn",
-        "profile_image": "https://pbs.twimg.com/profile_images/1738434567/Quinn_400x400.jpg",
+        "profile_image": "https://pbs.twimg.com/profile_images/1961577279865184256/Gcex1C5Q_400x400.jpg",
         "display_name": "Product by Quinn"
     },
     "BooksByQuinn": {
         "username": "BooksByQuinn",
-        "profile_image": "https://pbs.twimg.com/profile_images/1738434567/Quinn_400x400.jpg",
+        "profile_image": "https://pbs.twimg.com/profile_images/1961224839454224384/YNlSa9je_400x400.jpg",
         "display_name": "Books by Quinn"
     },
     "QuotesByQuinn": {
         "username": "QuotesByQuinn_",
-        "profile_image": "https://pbs.twimg.com/profile_images/1738434567/Quinn_400x400.jpg",
+        "profile_image": "https://pbs.twimg.com/profile_images/1961226848123158528/YsyYKZf6_400x400.jpg",
         "display_name": "Quotes by Quinn"
     }
 }

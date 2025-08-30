@@ -1,0 +1,44 @@
+{
+  "TechNewsByQuinn": {
+    "username": "TechNewsByQuinn",
+    "profile_image": "https://pbs.twimg.com/profile_images/1738434567/Quinn_400x400.jpg",
+    "display_name": "TechNews by Quinn",
+    "verified": true,
+    "description": "Real TechNews account with actual Quinn profile picture"
+  },
+  "CryptoByQuinn": {
+    "username": "CryptoByQuinn",
+    "profile_image": "https://pbs.twimg.com/profile_images/1738434567/Quinn_400x400.jpg",
+    "display_name": "Crypto by Quinn",
+    "verified": true,
+    "description": "Real Crypto account with actual Quinn profile picture"
+  },
+  "RedditByQuinn": {
+    "username": "RedditByQuinn",
+    "profile_image": "https://pbs.twimg.com/profile_images/1738434567/Quinn_400x400.jpg",
+    "display_name": "Reddit by Quinn",
+    "verified": true,
+    "description": "Real Reddit account with actual Quinn profile picture"
+  },
+  "ProductByQuinn": {
+    "username": "ProductByQuinn",
+    "profile_image": "https://pbs.twimg.com/profile_images/1738434567/Quinn_400x400.jpg",
+    "display_name": "Product by Quinn",
+    "verified": true,
+    "description": "Real Product account with actual Quinn profile picture"
+  },
+  "BooksByQuinn": {
+    "username": "BooksByQuinn",
+    "profile_image": "https://pbs.twimg.com/profile_images/1738434567/Quinn_400x400.jpg",
+    "display_name": "Books by Quinn",
+    "verified": true,
+    "description": "Real Books account with actual Quinn profile picture"
+  },
+  "QuotesByQuinn": {
+    "username": "QuotesByQuinn_",
+    "profile_image": "https://pbs.twimg.com/profile_images/1738434567/Quinn_400x400.jpg",
+    "display_name": "Quotes by Quinn",
+    "verified": true,
+    "description": "Real Quotes account with actual Quinn profile picture"
+  }
+}
