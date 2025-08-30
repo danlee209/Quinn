@@ -418,14 +418,16 @@
 
         // Load profile data
         function loadProfilesData() {
+            console.log('🔄 Loading profile data...');
             fetch('/api/profiles')
                 .then(response => response.json())
                 .then(data => {
+                    console.log('✅ Profiles loaded:', data);
                     profilesData = data;
                     updateProfileImages();
                 })
                 .catch(error => {
-                    console.error('Error loading profiles:', error);
+                    console.error('❌ Error loading profiles:', error);
                 });
         }
 
@@ -450,12 +452,26 @@
                 const accountAvatar = document.querySelector(`[data-account="${accountName}"] .account-avatar img`);
                 if (accountAvatar) {
                     accountAvatar.src = profileImage;
+                    // Add error handling
+                    accountAvatar.onerror = function() {
+                        console.log(`Failed to load image for ${accountName}: ${profileImage}`);
+                        this.style.display = 'none';
+                        const fallback = this.nextElementSibling;
+                        if (fallback) fallback.style.display = 'flex';
+                    };
                 }
                 
                 // Update section header avatars
                 const sectionAvatar = document.querySelector(`[data-section="${accountName}"] .section-avatar img`);
                 if (sectionAvatar) {
                     sectionAvatar.src = profileImage;
+                    // Add error handling
+                    sectionAvatar.onerror = function() {
+                        console.log(`Failed to load image for ${accountName}: ${profileImage}`);
+                        this.style.display = 'none';
+                        const fallback = this.nextElementSibling;
+                        if (fallback) fallback.style.display = 'flex';
+                    };
                 }
             });
         }

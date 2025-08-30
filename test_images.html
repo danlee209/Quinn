@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Twitter Profile Images</title>
+    <style>
+        .avatar-test {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 10px;
+            border: 2px solid #ccc;
+        }
+        .status {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <h1>🐦 Testing Twitter Profile Images</h1>
+    
+    <h2>TechNewsByQuinn</h2>
+    <img src="https://pbs.twimg.com/profile_images/1961225994573950976/-FJBUh-w_400x400.jpg" 
+         alt="TechNews" class="avatar-test" 
+         onload="showStatus('technews', 'success')" 
+         onerror="showStatus('technews', 'error')">
+    <div id="technews-status"></div>
+    
+    <h2>CryptoByQuinn</h2>
+    <img src="https://pbs.twimg.com/profile_images/1961586020098396160/qaGJGjrX_400x400.jpg" 
+         alt="Crypto" class="avatar-test"
+         onload="showStatus('crypto', 'success')" 
+         onerror="showStatus('crypto', 'error')">
+    <div id="crypto-status"></div>
+    
+    <h2>RedditByQuinn</h2>
+    <img src="https://pbs.twimg.com/profile_images/1961570789989265408/XW-SMtAl_400x400.jpg" 
+         alt="Reddit" class="avatar-test"
+         onload="showStatus('reddit', 'success')" 
+         onerror="showStatus('reddit', 'error')">
+    <div id="reddit-status"></div>
+    
+    <h2>ProductByQuinn</h2>
+    <img src="https://pbs.twimg.com/profile_images/1961577279865184256/Gcex1C5Q_400x400.jpg" 
+         alt="Product" class="avatar-test"
+         onload="showStatus('product', 'success')" 
+         onerror="showStatus('product', 'error')">
+    <div id="product-status"></div>
+    
+    <h2>BooksByQuinn</h2>
+    <img src="https://pbs.twimg.com/profile_images/1961224839454224384/YNlSa9je_400x400.jpg" 
+         alt="Books" class="avatar-test"
+         onload="showStatus('books', 'success')" 
+         onerror="showStatus('books', 'error')">
+    <div id="books-status"></div>
+    
+    <h2>QuotesByQuinn</h2>
+    <img src="https://pbs.twimg.com/profile_images/1961226848123158528/YsyYKZf6_400x400.jpg" 
+         alt="Quotes" class="avatar-test"
+         onload="showStatus('quotes', 'success')" 
+         onerror="showStatus('quotes', 'error')">
+    <div id="quotes-status"></div>
+    
+    <script>
+        function showStatus(id, type) {
+            const statusDiv = document.getElementById(id + '-status');
+            if (type === 'success') {
+                statusDiv.innerHTML = '<div class="status success">✅ Image loaded successfully!</div>';
+            } else {
+                statusDiv.innerHTML = '<div class="status error">❌ Image failed to load</div>';
+            }
+        }
+    </script>
+</body>
+</html>

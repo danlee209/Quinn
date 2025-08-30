@@ -200,6 +200,11 @@ def health():
     """Health check endpoint for Vercel"""
     return jsonify({'status': 'healthy', 'timestamp': datetime.now().isoformat()})
 
+@app.route('/test-images')
+def test_images():
+    """Test Twitter profile images"""
+    return render_template('test_images.html')
+
 if __name__ == '__main__':
     print("🚀 Starting Quinn Dashboard (Simple Version)...")
     print("📱 Dashboard will be available at: http://localhost:5001")
