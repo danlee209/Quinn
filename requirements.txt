@@ -1,0 +1,19 @@
+# Core dependencies
+openai>=1.30.0
+python-dotenv>=1.0.1
+
+# RSS and web scraping
+feedparser>=6.0.11
+requests>=2.32.0
+beautifulsoup4>=4.12.3
+
+# Twitter integration
+tweepy>=4.14.0
+
+# HTTP and SSL handling
+urllib3>=2.0.0
+
+# Web app dependencies
+flask>=3.0.0
+flask-socketio>=5.3.0
+python-socketio>=5.8.0

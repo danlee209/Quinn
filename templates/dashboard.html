@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quinn Social Media Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .tweet-card {
+            transition: all 0.3s ease;
+        }
+        .tweet-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .account-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .crypto-header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        .tech-header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        .reddit-header {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+        }
+        .product-header {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+        }
+        .book-header {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+        }
+        .quote-header {
+            background: linear-gradient(135deg, #d299c2 0%, #fef9d7 100%);
+        }
+        .loading-spinner {
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-6">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <h1 class="text-3xl font-bold text-gray-900">Quinn</h1>
+                        <p class="text-sm text-gray-500">Social Media Dashboard • Last 6 Hours</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button id="refreshBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors">
+                        <i class="fas fa-sync-alt"></i>
+                        <span>Refresh Now</span>
+                    </button>
+                    <div class="text-sm text-gray-500">
+                        <span id="lastUpdate">Last update: Never</span>
+                    </div>
+                    <div id="apiStatus" class="text-sm px-3 py-1 rounded-full bg-yellow-100 text-yellow-800">
+                        <i class="fas fa-exclamation-triangle mr-1"></i>
+                        <span>Using Sample Data</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Info Banner -->
+    <div id="infoBanner" class="bg-blue-50 border-b border-blue-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center text-blue-800">
+                    <i class="fas fa-info-circle mr-2"></i>
+                    <span class="text-sm">Showing tweets from the last 6 hours. If you see sample data, the Twitter API may need authentication refresh.</span>
+                </div>
+                <button onclick="document.getElementById('infoBanner').style.display='none'" class="text-blue-600 hover:text-blue-800">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Account Overview -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white rounded-lg shadow p-6 account-header text-white">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-semibold">TechNews</h3>
+                        <p class="text-blue-100">High-signal tech news</p>
+                    </div>
+                    <i class="fas fa-newspaper text-2xl"></i>
+                </div>
+                <div class="mt-4">
+                    <div class="text-2xl font-bold" id="technews-count">-</div>
+                    <div class="text-sm text-blue-100">tweets</div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-6 crypto-header text-white">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-semibold">Crypto</h3>
+                        <p class="text-purple-100">High-signal crypto news</p>
+                    </div>
+                    <i class="fab fa-bitcoin text-2xl"></i>
+                </div>
+                <div class="mt-4">
+                    <div class="text-2xl font-bold" id="crypto-count">-</div>
+                    <div class="text-sm text-purple-100">tweets</div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-6 reddit-header text-white">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-semibold">Reddit</h3>
+                        <p class="text-pink-100">Top posts summary</p>
+                    </div>
+                    <i class="fab fa-reddit text-2xl"></i>
+                </div>
+                <div class="mt-4">
+                    <div class="text-2xl font-bold" id="reddit-count">-</div>
+                    <div class="text-sm text-pink-100">tweets</div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-6 product-header text-white">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-semibold">ProductHunt</h3>
+                        <p class="text-teal-100">Product showcase</p>
+                    </div>
+                    <i class="fas fa-rocket text-2xl"></i>
+                </div>
+                <div class="mt-4">
+                    <div class="text-2xl font-bold" id="product-count">-</div>
+                    <div class="text-sm text-teal-100">tweets</div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-6 book-header text-white">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-semibold">Books</h3>
+                        <p class="text-orange-100">Book recommendations</p>
+                    </div>
+                    <i class="fas fa-book text-2xl"></i>
+                </div>
+                <div class="mt-4">
+                    <div class="text-2xl font-bold" id="book-count">-</div>
+                    <div class="text-sm text-orange-100">tweets</div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-6 quote-header text-white">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-semibold">Quotes</h3>
+                        <p class="text-pink-100">Inspirational quotes</p>
+                    </div>
+                    <i class="fas fa-quote-left text-2xl"></i>
+                </div>
+                <div class="mt-4">
+                    <div class="text-2xl font-bold" id="quote-count">-</div>
+                    <div class="text-sm text-pink-100">tweets</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tweets Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- TechNews Tweets -->
+            <div class="bg-white rounded-lg shadow">
+                <div class="tech-header text-white p-6 rounded-t-lg">
+                    <h2 class="text-xl font-semibold flex items-center">
+                        <i class="fas fa-newspaper mr-3"></i>
+                        TechNews by Quinn
+                    </h2>
+                </div>
+                <div class="p-6" id="technews-tweets">
+                    <div class="text-center text-gray-500 py-8">
+                        <i class="fas fa-spinner loading-spinner text-2xl mb-2"></i>
+                        <p>Loading tweets...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Crypto Tweets -->
+            <div class="bg-white rounded-lg shadow">
+                <div class="crypto-header text-white p-6 rounded-t-lg">
+                    <h2 class="text-xl font-semibold flex items-center">
+                        <i class="fab fa-bitcoin mr-3"></i>
+                        Crypto by Quinn
+                    </h2>
+                </div>
+                <div class="p-6" id="crypto-tweets">
+                    <div class="text-center text-gray-500 py-8">
+                        <i class="fas fa-spinner loading-spinner text-2xl mb-2"></i>
+                        <p>Loading tweets...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reddit Tweets -->
+            <div class="bg-white rounded-lg shadow">
+                <div class="reddit-header text-white p-6 rounded-t-lg">
+                    <h2 class="text-xl font-semibold flex items-center">
+                        <i class="fab fa-reddit mr-3"></i>
+                        Reddit by Quinn
+                    </h2>
+                </div>
+                <div class="p-6" id="reddit-tweets">
+                    <div class="text-center text-gray-500 py-8">
+                        <i class="fas fa-spinner loading-spinner text-2xl mb-2"></i>
+                        <p>Loading tweets...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ProductHunt Tweets -->
+            <div class="bg-white rounded-lg shadow">
+                <div class="product-header text-white p-6 rounded-t-lg">
+                    <h2 class="text-xl font-semibold flex items-center">
+                        <i class="fas fa-rocket mr-3"></i>
+                        Product by Quinn
+                    </h2>
+                </div>
+                <div class="p-6" id="product-tweets">
+                    <div class="text-center text-gray-500 py-8">
+                        <i class="fas fa-spinner loading-spinner text-2xl mb-2"></i>
+                        <p>Loading tweets...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Books Tweets -->
+            <div class="bg-white rounded-lg shadow">
+                <div class="book-header text-white p-6 rounded-t-lg">
+                    <h2 class="text-xl font-semibold flex items-center">
+                        <i class="fas fa-book mr-3"></i>
+                        Books by Quinn
+                    </h2>
+                </div>
+                <div class="p-6" id="book-tweets">
+                    <div class="text-center text-gray-500 py-8">
+                        <i class="fas fa-spinner loading-spinner text-2xl mb-2"></i>
+                        <p>Loading tweets...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quotes Tweets -->
+            <div class="bg-white rounded-lg shadow">
+                <div class="quote-header text-white p-6 rounded-t-lg">
+                    <h2 class="text-xl font-semibold flex items-center">
+                        <i class="fas fa-quote-left mr-3"></i>
+                        Quotes by Quinn
+                    </h2>
+                </div>
+                <div class="p-6" id="quote-tweets">
+                    <div class="text-center text-gray-500 py-8">
+                        <i class="fas fa-spinner loading-spinner text-2xl mb-2"></i>
+                        <p>Loading tweets...</p>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="text-center text-gray-500 text-sm">
+                <p>Quinn Social Media Dashboard • Last 6 Hours • Real-time updates every 5 minutes</p>
+                <p class="mt-1">Powered by Flask & Socket.IO</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Socket.IO
+        const socket = io();
+        
+        // Global state
+        let tweetsData = {};
+        let lastUpdate = {};
+
+        // Connect to WebSocket
+        socket.on('connect', function(data) {
+            console.log('Connected to Quinn Dashboard');
+            document.getElementById('lastUpdate').textContent = 'Connected to dashboard';
+        });
+
+        // Handle real-time updates
+        socket.on('tweets_updated', function(data) {
+            console.log('Received tweet update:', data);
+            tweetsData = data.tweets;
+            lastUpdate = data.last_update;
+            updateDashboard();
+        });
+
+        // Manual refresh button
+        document.getElementById('refreshBtn').addEventListener('click', function() {
+            this.disabled = true;
+            this.innerHTML = '<i class="fas fa-spinner loading-spinner"></i><span>Updating...</span>';
+            
+            socket.emit('request_update');
+            
+            setTimeout(() => {
+                this.disabled = false;
+                this.innerHTML = '<i class="fas fa-sync-alt"></i><span>Refresh Now</span>';
+            }, 5000);
+        });
+
+        // Update dashboard with new data
+        function updateDashboard() {
+            // Update account counts
+            updateAccountCount('TechNewsByQuinn', 'technews-count');
+            updateAccountCount('CryptoByQuinn', 'crypto-count');
+            updateAccountCount('RedditByQuinn', 'reddit-count');
+            updateAccountCount('ProductByQuinn', 'product-count');
+            updateAccountCount('BooksByQuinn', 'book-count');
+            updateAccountCount('QuotesByQuinn', 'quote-count');
+
+            // Update tweet displays
+            updateTweetSection('TechNewsByQuinn', 'technews-tweets');
+            updateTweetSection('CryptoByQuinn', 'crypto-tweets');
+            updateTweetSection('RedditByQuinn', 'reddit-tweets');
+            updateTweetSection('ProductByQuinn', 'product-tweets');
+            updateTweetSection('BooksByQuinn', 'book-tweets');
+            updateTweetSection('QuotesByQuinn', 'quote-tweets');
+
+                    // Update last update time
+        if (Object.keys(lastUpdate).length > 0) {
+            const latestUpdate = new Date(Math.max(...Object.values(lastUpdate).map(d => new Date(d))));
+            document.getElementById('lastUpdate').textContent = `Last update: ${formatTimeAgo(latestUpdate)}`;
+        }
+        
+        // Update API status
+        updateApiStatus();
+        }
+
+        // Update account count
+        function updateAccountCount(accountName, elementId) {
+            const count = tweetsData[accountName] ? tweetsData[accountName].length : 0;
+            document.getElementById(elementId).textContent = count;
+        }
+
+        // Update tweet section
+        function updateTweetSection(accountName, elementId) {
+            const container = document.getElementById(elementId);
+            const tweets = tweetsData[accountName] || [];
+            
+            if (tweets.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-gray-500 py-8">
+                        <i class="fas fa-inbox text-2xl mb-2"></i>
+                        <p>No tweets available</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = tweets.map(tweet => `
+                <div class="tweet-card border border-gray-200 rounded-lg p-4 mb-4 hover:border-blue-300">
+                    <div class="flex justify-between items-start mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xs text-gray-500">${tweet.time_ago}</span>
+                        </div>
+                        <a href="${tweet.url}" target="_blank" class="text-blue-500 hover:text-blue-700">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                    </div>
+                    <p class="text-gray-800 mb-3 leading-relaxed">${tweet.text}</p>
+                    <div class="flex items-center space-x-4 text-sm text-gray-500">
+                        <span><i class="fas fa-heart text-red-500"></i> ${tweet.metrics.likes || 0}</span>
+                        <span><i class="fas fa-retweet text-green-500"></i> ${tweet.metrics.retweets || 0}</span>
+                        <span><i class="fas fa-reply text-blue-500"></i> ${tweet.metrics.replies || 0}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Update API status indicator
+        function updateApiStatus() {
+            const apiStatus = document.getElementById('apiStatus');
+            let hasRealData = false;
+            let hasSampleData = false;
+            
+            // Check if we have any real tweets (not sample IDs)
+            for (const accountName in tweetsData) {
+                const tweets = tweetsData[accountName] || [];
+                for (const tweet of tweets) {
+                    if (tweet.id && !tweet.id.startsWith('sample_')) {
+                        hasRealData = true;
+                    } else if (tweet.id && tweet.id.startsWith('sample_')) {
+                        hasSampleData = true;
+                    }
+                }
+            }
+            
+            if (hasRealData && hasSampleData) {
+                apiStatus.className = 'text-sm px-3 py-1 rounded-full bg-orange-100 text-orange-800';
+                apiStatus.innerHTML = '<i class="fas fa-exclamation-triangle mr-1"></i><span>Mixed Data</span>';
+            } else if (hasRealData) {
+                apiStatus.className = 'text-sm px-3 py-1 rounded-full bg-green-100 text-green-800';
+                apiStatus.innerHTML = '<i class="fas fa-check-circle mr-1"></i><span>Live Data</span>';
+            } else if (hasSampleData) {
+                apiStatus.className = 'text-sm px-3 py-1 rounded-full bg-yellow-100 text-yellow-800';
+                apiStatus.innerHTML = '<i class="fas fa-exclamation-triangle mr-1"></i><span>Sample Data</span>';
+            } else {
+                apiStatus.className = 'text-sm px-3 py-1 rounded-full bg-gray-100 text-gray-800';
+                apiStatus.innerHTML = '<i class="fas fa-question-circle mr-1"></i><span>No Data</span>';
+            }
+        }
+        
+        // Format time ago
+        function formatTimeAgo(date) {
+            const now = new Date();
+            const diff = now - date;
+            const minutes = Math.floor(diff / 60000);
+            const hours = Math.floor(diff / 3600000);
+            const days = Math.floor(diff / 86400000);
+
+            if (days > 0) return `${days}d ago`;
+            if (hours > 0) return `${hours}h ago`;
+            if (minutes > 0) return `${minutes}m ago`;
+            return 'just now';
+        }
+
+        // Load initial data
+        fetch('/api/tweets')
+            .then(response => response.json())
+            .then(data => {
+                tweetsData = data.tweets;
+                lastUpdate = data.last_update;
+                updateDashboard();
+            })
+            .catch(error => {
+                console.error('Error loading initial data:', error);
+            });
+
+        // Auto-refresh every 30 seconds as backup
+        setInterval(() => {
+            if (Object.keys(tweetsData).length === 0) {
+                fetch('/api/tweets')
+                    .then(response => response.json())
+                    .then(data => {
+                        tweetsData = data.tweets;
+                        lastUpdate = data.last_update;
+                        updateDashboard();
+                    })
+                    .catch(error => console.error('Auto-refresh error:', error));
+            }
+        }, 30000);
+    </script>
+</body>
+</html>
