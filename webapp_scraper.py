@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python3
 """
 Quinn Dashboard - Twitter Scraper Version
@@ -334,7 +335,7 @@ def handle_update_request():
 
 if __name__ == '__main__':
     print("🚀 Starting Quinn Dashboard (Scraper Version)...")
-    print("📱 Dashboard will be available at: http://localhost:5001")
+    print("📱 Dashboard will be available at: http://localhost:9999")
     print("🔄 Tweets will update every 5 minutes automatically")
     print("🌐 Using web scraping to fetch tweets (no API keys needed)")
     
@@ -346,4 +347,4 @@ if __name__ == '__main__':
     update_thread.start()
     
     # Start Flask app
-    socketio.run(app, host='0.0.0.0', port=5002, debug=True)
+    socketio.run(app, host='0.0.0.0', port=9999, debug=True)

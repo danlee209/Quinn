@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quinn Social Media Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .tweet-card {
+            transition: all 0.3s ease;
+        }
+        .tweet-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .account-avatar {
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .account-avatar:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+        .header-avatar {
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .header-avatar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+        }
+        .account-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .crypto-header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        .tech-header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        .reddit-header {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+        }
+        .product-header {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+        }
+        .book-header {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+        }
+        .quote-header {
+            background: linear-gradient(135deg, #d299c2 0%, #fef9d7 100%);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-6">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-2xl font-bold header-avatar">
+                                Q
+                            </div>
+                            <div>
+                                <h1 class="text-3xl font-bold text-gray-900">Quinn</h1>
+                                <p class="text-sm text-gray-500">Social Media Dashboard • Demo Version</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button id="refreshBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors">
+                        <i class="fas fa-sync-alt"></i>
+                        <span>Refresh Data</span>
+                    </button>
+                    <div class="text-sm text-gray-500">
+                        <span id="lastUpdate">Last update: Just now</span>
+                    </div>
+                    <div id="apiStatus" class="text-sm px-3 py-1 rounded-full bg-green-100 text-green-800">
+                        <i class="fas fa-check-circle mr-1"></i>
+                        <span>Demo Data</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Info Banner -->
+    <div id="infoBanner" class="bg-blue-50 border-b border-blue-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center text-blue-800">
+                    <i class="fas fa-info-circle mr-2"></i>
+                    <span class="text-sm">This is a demo version with sample data. Ready for Vercel deployment!</span>
+                </div>
+                <button onclick="document.getElementById('infoBanner').style.display='none'" class="text-blue-600 hover:text-blue-800">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Account Overview -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white rounded-lg shadow p-6 account-header text-white">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 bg-blue-400 rounded-full flex items-center justify-center text-white text-xl font-bold account-avatar">
+                            <i class="fas fa-newspaper"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold">TechNews</h3>
+                            <p class="text-blue-100">High-signal tech news</p>
+                        </div>
+                    </div>
+                    <i class="fas fa-newspaper text-2xl"></i>
+                </div>
+                <div class="mt-4">
+                    <div class="text-2xl font-bold" id="technews-count">3</div>
+                    <div class="text-sm text-blue-100">tweets</div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-6 crypto-header text-white">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center text-white text-xl font-bold account-avatar">
+                            <i class="fab fa-bitcoin"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold">Crypto</h3>
+                            <p class="text-purple-100">High-signal crypto news</p>
+                        </div>
+                    </div>
+                    <i class="fab fa-bitcoin text-2xl"></i>
+                </div>
+                <div class="mt-4">
+                    <div class="text-2xl font-bold" id="crypto-count">3</div>
+                    <div class="text-sm text-purple-100">tweets</div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-6 reddit-header text-white">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center text-white text-xl font-bold account-avatar">
+                            <i class="fab fa-reddit"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold">Reddit</h3>
+                            <p class="text-pink-100">Top posts summary</p>
+                        </div>
+                    </div>
+                    <i class="fab fa-reddit text-2xl"></i>
+                </div>
+                <div class="mt-4">
+                    <div class="text-2xl font-bold" id="reddit-count">2</div>
+                    <div class="text-sm text-pink-100">tweets</div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-6 product-header text-white">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 bg-teal-500 rounded-full flex items-center justify-center text-white text-xl font-bold account-avatar">
+                            <i class="fas fa-rocket"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold">ProductHunt</h3>
+                            <p class="text-teal-100">Product showcase</p>
+                        </div>
+                    </div>
+                    <i class="fas fa-rocket text-2xl"></i>
+                </div>
+                <div class="mt-4">
+                    <div class="text-2xl font-bold" id="product-count">2</div>
+                    <div class="text-sm text-teal-100">tweets</div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-6 book-header text-white">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center text-white text-xl font-bold account-avatar">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold">Books</h3>
+                            <p class="text-orange-100">Book recommendations</p>
+                        </div>
+                    </div>
+                    <i class="fas fa-book text-2xl"></i>
+                </div>
+                <div class="mt-4">
+                    <div class="text-2xl font-bold" id="book-count">2</div>
+                    <div class="text-sm text-orange-100">tweets</div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow p-6 quote-header text-white">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 bg-pink-500 rounded-full flex items-center justify-center text-white text-xl font-bold account-avatar">
+                            <i class="fas fa-quote-left"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold">Quotes</h3>
+                            <p class="text-pink-100">Inspirational quotes</p>
+                        </div>
+                    </div>
+                    <i class="fas fa-quote-left text-2xl"></i>
+                </div>
+                <div class="mt-4">
+                    <div class="text-2xl font-bold" id="quote-count">2</div>
+                    <div class="text-sm text-pink-100">tweets</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tweets Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- TechNews Tweets -->
+            <div class="bg-white rounded-lg shadow">
+                <div class="tech-header text-white p-6 rounded-t-lg">
+                    <h2 class="text-xl font-semibold flex items-center">
+                        <div class="w-8 h-8 bg-blue-400 rounded-full flex items-center justify-center text-white text-sm font-bold mr-3">
+                            <i class="fas fa-newspaper"></i>
+                        </div>
+                        TechNews by Quinn
+                    </h2>
+                </div>
+                <div class="p-6" id="technews-tweets">
+                    <div class="text-center text-gray-500 py-8">
+                        <i class="fas fa-spinner fa-spin text-2xl mb-2"></i>
+                        <p>Loading tweets...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Crypto Tweets -->
+            <div class="bg-white rounded-lg shadow">
+                <div class="crypto-header text-white p-6 rounded-t-lg">
+                    <h2 class="text-xl font-semibold flex items-center">
+                        <div class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-white text-sm font-bold mr-3">
+                            <i class="fab fa-bitcoin"></i>
+                        </div>
+                        Crypto by Quinn
+                    </h2>
+                </div>
+                <div class="p-6" id="crypto-tweets">
+                    <div class="text-center text-gray-500 py-8">
+                        <i class="fas fa-spinner fa-spin text-2xl mb-2"></i>
+                        <p>Loading tweets...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reddit Tweets -->
+            <div class="bg-white rounded-lg shadow">
+                <div class="reddit-header text-white p-6 rounded-t-lg">
+                    <h2 class="text-xl font-semibold flex items-center">
+                        <div class="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center text-white text-sm font-bold mr-3">
+                            <i class="fab fa-reddit"></i>
+                        </div>
+                        Reddit by Quinn
+                    </h2>
+                </div>
+                <div class="p-6" id="reddit-tweets">
+                    <div class="text-center text-gray-500 py-8">
+                        <i class="fas fa-spinner fa-spin text-2xl mb-2"></i>
+                        <p>Loading tweets...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ProductHunt Tweets -->
+            <div class="bg-white rounded-lg shadow">
+                <div class="product-header text-white p-6 rounded-t-lg">
+                    <h2 class="text-xl font-semibold flex items-center">
+                        <div class="w-8 h-8 bg-teal-500 rounded-full flex items-center justify-center text-white text-sm font-bold mr-3">
+                            <i class="fas fa-rocket"></i>
+                        </div>
+                        Product by Quinn
+                    </h2>
+                </div>
+                <div class="p-6" id="product-tweets">
+                    <div class="text-center text-gray-500 py-8">
+                        <i class="fas fa-spinner fa-spin text-2xl mb-2"></i>
+                        <p>Loading tweets...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Books Tweets -->
+            <div class="bg-white rounded-lg shadow">
+                <div class="book-header text-white p-6 rounded-t-lg">
+                    <h2 class="text-xl font-semibold flex items-center">
+                        <div class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white text-sm font-bold mr-3">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        Books by Quinn
+                    </h2>
+                </div>
+                <div class="p-6" id="book-tweets">
+                    <div class="text-center text-gray-500 py-8">
+                        <i class="fas fa-spinner fa-spin text-2xl mb-2"></i>
+                        <p>Loading tweets...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quotes Tweets -->
+            <div class="bg-white rounded-lg shadow">
+                <div class="quote-header text-white p-6 rounded-t-lg">
+                    <h2 class="text-xl font-semibold flex items-center">
+                        <div class="w-8 h-8 bg-pink-500 rounded-full flex items-center justify-center text-white text-sm font-bold mr-3">
+                            <i class="fas fa-quote-left"></i>
+                        </div>
+                        Quotes by Quinn
+                    </h2>
+                </div>
+                <div class="p-6" id="quote-tweets">
+                    <div class="text-center text-gray-500 py-8">
+                        <i class="fas fa-spinner fa-spin text-2xl mb-2"></i>
+                        <p>Loading tweets...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="text-center text-gray-500 text-sm">
+                <p>Quinn Social Media Dashboard • Demo Version • Ready for Vercel Deployment</p>
+                <p class="mt-1">Powered by Flask & Tailwind CSS</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Global state
+        let tweetsData = {};
+
+        // Load initial data
+        loadDashboardData();
+
+        // Manual refresh button
+        document.getElementById('refreshBtn').addEventListener('click', function() {
+            this.disabled = true;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Refreshing...</span>';
+            
+            loadDashboardData();
+            
+            setTimeout(() => {
+                this.disabled = false;
+                this.innerHTML = '<i class="fas fa-sync-alt"></i><span>Refresh Data</span>';
+            }, 1000);
+        });
+
+        // Load dashboard data
+        function loadDashboardData() {
+            fetch('/api/tweets')
+                .then(response => response.json())
+                .then(data => {
+                    tweetsData = data.tweets;
+                    updateDashboard();
+                    updateLastUpdateTime(data.last_update);
+                })
+                .catch(error => {
+                    console.error('Error loading data:', error);
+                });
+        }
+
+        // Update dashboard with new data
+        function updateDashboard() {
+            // Update tweet displays
+            updateTweetSection('TechNewsByQuinn', 'technews-tweets');
+            updateTweetSection('CryptoByQuinn', 'crypto-tweets');
+            updateTweetSection('RedditByQuinn', 'reddit-tweets');
+            updateTweetSection('ProductByQuinn', 'product-tweets');
+            updateTweetSection('BooksByQuinn', 'book-tweets');
+            updateTweetSection('QuotesByQuinn', 'quote-tweets');
+        }
+
+        // Update tweet section
+        function updateTweetSection(accountName, elementId) {
+            const container = document.getElementById(elementId);
+            const tweets = tweetsData[accountName] || [];
+            
+            if (tweets.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-gray-500 py-8">
+                        <i class="fas fa-inbox text-2xl mb-2"></i>
+                        <p>No tweets available</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            
+            // Add header with tweet count
+            html += `<div class="mb-4 text-sm text-gray-600">Showing ${tweets.length} tweets</div>`;
+            
+            // Add all tweets
+            html += tweets.map(tweet => `
+                <div class="tweet-card border border-gray-200 rounded-lg p-4 mb-4 hover:border-blue-300">
+                    <div class="flex justify-between items-start mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xs text-gray-500">${tweet.time_ago}</span>
+                        </div>
+                        <a href="${tweet.url}" target="_blank" class="text-blue-500 hover:text-blue-700">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                    </div>
+                    <p class="text-gray-800 mb-3 leading-relaxed">${tweet.text}</p>
+                    <div class="flex items-center space-x-4 text-sm text-gray-500">
+                        <span><i class="fas fa-heart text-red-500"></i> ${tweet.metrics.likes || 0}</span>
+                        <span><i class="fas fa-retweet text-green-500"></i> ${tweet.metrics.retweets || 0}</span>
+                        <span><i class="fas fa-reply text-blue-500"></i> ${tweet.metrics.replies || 0}</span>
+                    </div>
+                </div>
+            `).join('');
+            
+            container.innerHTML = html;
+        }
+
+        // Update last update time
+        function updateLastUpdateTime(timestamp) {
+            const date = new Date(timestamp);
+            document.getElementById('lastUpdate').textContent = `Last update: ${formatTimeAgo(date)}`;
+        }
+        
+        // Format time ago
+        function formatTimeAgo(date) {
+            const now = new Date();
+            const diff = now - date;
+            const minutes = Math.floor(diff / 60000);
+            const hours = Math.floor(diff / 3600000);
+            const days = Math.floor(diff / 86400000);
+
+            if (days > 0) return `${days}d ago`;
+            if (hours > 0) return `${hours}h ago`;
+            if (minutes > 0) return `${minutes}m ago`;
+            return 'just now';
+        }
+    </script>
+</body>
+</html>
