@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 🚀 Quinn Social Media Bot
 
 **AI-powered social media automation with high-signal content generation**
@@ -41,8 +42,8 @@ Quinn/
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/quinn-bot.git
-   cd quinn-bot
+   git clone https://github.com/danlee209/Quinn.git
+   cd Quinn
    ```
 
 2. **Set up virtual environment**
@@ -277,12 +278,16 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-- **Issues**: [GitHub Issues](https://github.com/yourusername/quinn-bot/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/quinn-bot/discussions)
-- **Wiki**: [Project Wiki](https://github.com/yourusername/quinn-bot/wiki)
+- **Issues**: [GitHub Issues](https://github.com/danlee209/Quinn/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/danlee209/Quinn/discussions)
+- **Wiki**: [Project Wiki](https://github.com/danlee209/Quinn/wiki)
 
 ---
 
 **Made with ❤️ by Quinn Bot Team**
 
 *Automate your social media presence with AI-powered intelligence*
+=======
+# Quinn
+Quinn - making the world just a little bit smarter
+>>>>>>> b78824c5e3e28b65b93622324cd5b7f1c375ba12
