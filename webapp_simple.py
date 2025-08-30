@@ -10,6 +10,40 @@ from datetime import datetime, timedelta
 
 app = Flask(__name__)
 
+# Twitter profile information
+TWITTER_PROFILES = {
+    "TechNewsByQuinn": {
+        "username": "TechNewsByQuinn",
+        "profile_image": "https://pbs.twimg.com/profile_images/1738434567/Quinn_400x400.jpg",
+        "display_name": "TechNews by Quinn"
+    },
+    "CryptoByQuinn": {
+        "username": "CryptoByQuinn", 
+        "profile_image": "https://pbs.twimg.com/profile_images/1738434567/Quinn_400x400.jpg",
+        "display_name": "Crypto by Quinn"
+    },
+    "RedditByQuinn": {
+        "username": "RedditByQuinn",
+        "profile_image": "https://pbs.twimg.com/profile_images/1738434567/Quinn_400x400.jpg", 
+        "display_name": "Reddit by Quinn"
+    },
+    "ProductByQuinn": {
+        "username": "ProductByQuinn",
+        "profile_image": "https://pbs.twimg.com/profile_images/1738434567/Quinn_400x400.jpg",
+        "display_name": "Product by Quinn"
+    },
+    "BooksByQuinn": {
+        "username": "BooksByQuinn",
+        "profile_image": "https://pbs.twimg.com/profile_images/1738434567/Quinn_400x400.jpg",
+        "display_name": "Books by Quinn"
+    },
+    "QuotesByQuinn": {
+        "username": "QuotesByQuinn_",
+        "profile_image": "https://pbs.twimg.com/profile_images/1738434567/Quinn_400x400.jpg",
+        "display_name": "Quotes by Quinn"
+    }
+}
+
 # Dummy data for all accounts
 DUMMY_DATA = {
     "TechNewsByQuinn": [
@@ -147,6 +181,11 @@ def dashboard():
 def get_accounts():
     """Get list of accounts"""
     return jsonify(list(DUMMY_DATA.keys()))
+
+@app.route('/api/profiles')
+def get_profiles():
+    """Get Twitter profile information"""
+    return jsonify(TWITTER_PROFILES)
 
 @app.route('/api/tweets')
 def get_tweets():
