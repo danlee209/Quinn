@@ -22,14 +22,14 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 tweets_data = {}
 last_update = {}
 
-def fetch_recent_tweets(account_name, max_tweets=20):
-    """Fetch recent tweets from a specific account"""
+def fetch_recent_tweets(account_name, max_tweets=50):
+    """Fetch recent tweets from a specific account (all available tweets)"""
     try:
         # Find the account credentials
         account = next((acc for acc in accounts_data if acc["name"] == account_name), None)
         if not account:
             print(f"❌ No Twitter credentials found for {account_name}")
-            return []
+            return get_sample_tweets(account_name)
         
         # Authenticate with Twitter
         client = tweepy.Client(
@@ -43,7 +43,7 @@ def fetch_recent_tweets(account_name, max_tweets=20):
         user = client.get_me()
         if not user.data:
             print(f"❌ Could not get user info for {account_name}")
-            return []
+            return get_sample_tweets(account_name)
         
         user_id = user.data.id
         
@@ -55,7 +55,8 @@ def fetch_recent_tweets(account_name, max_tweets=20):
         )
         
         if not tweets.data:
-            return []
+            print(f"⚠️  No tweets found for {account_name}")
+            return get_sample_tweets(account_name)
         
         formatted_tweets = []
         for tweet in tweets.data:
@@ -86,11 +87,13 @@ def fetch_recent_tweets(account_name, max_tweets=20):
                 } if hasattr(tweet, 'public_metrics') else {}
             })
         
+        print(f"✅ Found {len(formatted_tweets)} tweets for {account_name}")
         return formatted_tweets
         
     except Exception as e:
         print(f"❌ Error fetching tweets for {account_name}: {e}")
-        return []
+        # Return sample data for demonstration if API fails
+        return get_sample_tweets(account_name)
 
 def update_all_tweets():
     """Update tweets for all accounts"""

@@ -53,7 +53,7 @@
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
                         <h1 class="text-3xl font-bold text-gray-900">Quinn</h1>
-                        <p class="text-sm text-gray-500">Social Media Dashboard • Last 6 Hours</p>
+                        <p class="text-sm text-gray-500">Social Media Dashboard • All Tweets</p>
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">
@@ -79,7 +79,7 @@
             <div class="flex items-center justify-between">
                 <div class="flex items-center text-blue-800">
                     <i class="fas fa-info-circle mr-2"></i>
-                    <span class="text-sm">Showing tweets from the last 6 hours. If you see sample data, the Twitter API may need authentication refresh.</span>
+                    <span class="text-sm">Showing all available tweets. If you see sample data, the Twitter API may need authentication refresh.</span>
                 </div>
                 <button onclick="document.getElementById('infoBanner').style.display='none'" class="text-blue-600 hover:text-blue-800">
                     <i class="fas fa-times"></i>
@@ -282,7 +282,7 @@
     <footer class="bg-white border-t mt-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <div class="text-center text-gray-500 text-sm">
-                <p>Quinn Social Media Dashboard • Last 6 Hours • Real-time updates every 5 minutes</p>
+                <p>Quinn Social Media Dashboard • All Tweets • Real-time updates every 5 minutes</p>
                 <p class="mt-1">Powered by Flask & Socket.IO</p>
             </div>
         </div>
@@ -372,7 +372,17 @@
                 return;
             }
 
-            container.innerHTML = tweets.map(tweet => `
+            // Show only first 3 tweets initially for better UI
+            const displayTweets = tweets.slice(0, 3);
+            const hasMore = tweets.length > 3;
+            
+            let html = '';
+            
+            // Add header with tweet count
+            html += `<div class="mb-4 text-sm text-gray-600">Showing ${displayTweets.length} of ${tweets.length} tweets</div>`;
+            
+            // Add tweets
+            html += displayTweets.map(tweet => `
                 <div class="tweet-card border border-gray-200 rounded-lg p-4 mb-4 hover:border-blue-300">
                     <div class="flex justify-between items-start mb-3">
                         <div class="flex items-center space-x-2">
@@ -390,6 +400,63 @@
                     </div>
                 </div>
             `).join('');
+            
+            // Add "Show More" button if there are more tweets
+            if (hasMore) {
+                html += `
+                    <div class="text-center pt-4">
+                        <button onclick="showAllTweets('${accountName}', '${elementId}')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors">
+                            Show all ${tweets.length} tweets
+                        </button>
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = html;
+        }
+
+        // Show all tweets for an account
+        function showAllTweets(accountName, elementId) {
+            const container = document.getElementById(elementId);
+            const tweets = tweetsData[accountName] || [];
+            
+            if (tweets.length === 0) return;
+            
+            let html = '';
+            
+            // Add header with tweet count
+            html += `<div class="mb-4 text-sm text-gray-600">Showing all ${tweets.length} tweets</div>`;
+            
+            // Add all tweets
+            html += tweets.map(tweet => `
+                <div class="tweet-card border border-gray-200 rounded-lg p-4 mb-4 hover:border-blue-300">
+                    <div class="flex justify-between items-start mb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xs text-gray-500">${tweet.time_ago}</span>
+                        </div>
+                        <a href="${tweet.url}" target="_blank" class="text-blue-500 hover:text-blue-700">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                    </div>
+                    <p class="text-gray-800 mb-3 leading-relaxed">${tweet.text}</p>
+                    <div class="flex items-center space-x-4 text-sm text-gray-500">
+                        <span><i class="fas fa-heart text-red-500"></i> ${tweet.metrics.likes || 0}</span>
+                        <span><i class="fas fa-retweet text-green-500"></i> ${tweet.metrics.retweets || 0}</span>
+                        <span><i class="fas fa-reply text-blue-500"></i> ${tweet.metrics.replies || 0}</span>
+                    </div>
+                </div>
+            `).join('');
+            
+            // Add "Show Less" button
+            html += `
+                <div class="text-center pt-4">
+                    <button onclick="updateTweetSection('${accountName}', '${elementId}')" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors">
+                        Show Less
+                    </button>
+                </div>
+            `;
+            
+            container.innerHTML = html;
         }
 
         // Update API status indicator
